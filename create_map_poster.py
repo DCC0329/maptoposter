@@ -181,7 +181,7 @@ def load_theme(theme_name="terracotta"):
     theme_file = os.path.join(THEMES_DIR, f"{theme_name}.json")
 
     if not os.path.exists(theme_file):
-        print(f"⚠ Theme file '{theme_file}' not found. Using default terracotta theme.")
+        print(f"[!] Theme file '{theme_file}' not found. Using default terracotta theme.")
         # Fallback to embedded terracotta theme
         return {
             "name": "Terracotta",
@@ -201,7 +201,7 @@ def load_theme(theme_name="terracotta"):
 
     with open(theme_file, "r", encoding=FILE_ENCODING) as f:
         theme = json.load(f)
-        print(f"✓ Loaded theme: {theme.get('name', theme_name)}")
+        print(f"[OK] Loaded theme: {theme.get('name', theme_name)}")
         if "description" in theme:
             print(f"  {theme['description']}")
         return theme
@@ -324,7 +324,7 @@ def get_coordinates(city, country):
     coords = f"coords_{city.lower()}_{country.lower()}"
     cached = cache_get(coords)
     if cached:
-        print(f"✓ Using cached coordinates for {city}, {country}")
+        print(f"[OK] Using cached coordinates for {city}, {country}")
         return cached
 
     print("Looking up coordinates...")
@@ -357,10 +357,10 @@ def get_coordinates(city, country):
         # Use getattr to safely access address (helps static analyzers)
         addr = getattr(location, "address", None)
         if addr:
-            print(f"✓ Found: {addr}")
+            print(f"[OK] Found: {addr}")
         else:
-            print("✓ Found location (address not available)")
-        print(f"✓ Coordinates: {location.latitude}, {location.longitude}")
+            print("[OK] Found location (address not available)")
+        print(f"[OK] Coordinates: {location.latitude}, {location.longitude}")
         try:
             cache_set(coords, (location.latitude, location.longitude))
         except CacheError as e:
@@ -424,7 +424,7 @@ def fetch_graph(point, dist) -> MultiDiGraph | None:
     graph = f"graph_{lat}_{lon}_{dist}"
     cached = cache_get(graph)
     if cached is not None:
-        print("✓ Using cached street network")
+        print("[OK] Using cached street network")
         return cast(MultiDiGraph, cached)
 
     try:
@@ -462,7 +462,7 @@ def fetch_features(point, dist, tags, name) -> GeoDataFrame | None:
     features = f"{name}_{lat}_{lon}_{dist}_{tag_str}"
     cached = cache_get(features)
     if cached is not None:
-        print(f"✓ Using cached {name}")
+        print(f"[OK] Using cached {name}")
         return cast(GeoDataFrame, cached)
 
     try:
@@ -557,7 +557,7 @@ def create_poster(
         )
         pbar.update(1)
 
-    print("✓ All data retrieved successfully!")
+    print("[OK] All data retrieved successfully!")
 
     # 2. Setup Plot
     print("Rendering map...")
@@ -769,7 +769,7 @@ def create_poster(
     plt.savefig(output_file, format=fmt, **save_kwargs)
 
     plt.close()
-    print(f"✓ Done! Poster saved as {output_file}")
+    print(f"[OK] Done! Poster saved as {output_file}")
 
 
 def print_examples():
@@ -977,12 +977,12 @@ Examples:
     # Enforce maximum dimensions
     if args.width > 20:
         print(
-            f"⚠ Width {args.width} exceeds the maximum allowed limit of 20. It's enforced as max limit 20."
+            f"[!] Width {args.width} exceeds the maximum allowed limit of 20. It's enforced as max limit 20."
         )
         args.width = 20.0
     if args.height > 20:
         print(
-            f"⚠ Height {args.height} exceeds the maximum allowed limit of 20. It's enforced as max limit 20."
+            f"[!] Height {args.height} exceeds the maximum allowed limit of 20. It's enforced as max limit 20."
         )
         args.height = 20.0
 
@@ -1009,7 +1009,7 @@ Examples:
     if args.font_family:
         custom_fonts = load_fonts(args.font_family)
         if not custom_fonts:
-            print(f"⚠ Failed to load '{args.font_family}', falling back to Roboto")
+            print(f"[!] Failed to load '{args.font_family}', falling back to Roboto")
 
     # Get coordinates and generate poster
     try:
@@ -1017,7 +1017,7 @@ Examples:
             lat = parse(args.latitude)
             lon = parse(args.longitude)
             coords = [lat, lon]
-            print(f"✓ Coordinates: {', '.join([str(i) for i in coords])}")
+            print(f"[OK] Coordinates: {', '.join([str(i) for i in coords])}")
         else:
             coords = get_coordinates(args.city, args.country)
 
@@ -1040,11 +1040,11 @@ Examples:
             )
 
         print("\n" + "=" * 50)
-        print("✓ Poster generation complete!")
+        print("[OK] Poster generation complete!")
         print("=" * 50)
 
     except Exception as e:
-        print(f"\n✗ Error: {e}")
+        print(f"\n[ERR] Error: {e}")
         import traceback
 
         traceback.print_exc()
